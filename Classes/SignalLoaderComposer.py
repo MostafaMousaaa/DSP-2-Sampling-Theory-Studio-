@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 class SignalLoaderComposer:
     def __init__(self):
@@ -29,3 +28,10 @@ class SignalLoaderComposer:
         # Add noise to the signal
         noise = np.random.normal(0, np.std(self.signal) / snr, self.signal.shape)
         self.signal += noise
+
+# Example usage
+loader = SignalLoaderComposer()
+loader.add_sinusoidal_component(2, 1)
+loader.add_sinusoidal_component(6, 0.5)
+loader.compose_signal()
+loader.add_noise(10)
