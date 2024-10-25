@@ -1,11 +1,11 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 class SignalSampler:
     def __init__(self):
         self.sampled_signal = None
-        self.reconstructed_signal = None
+        self.reconstructed_signal = np.zeros(1000)  # Initialize with zeros or appropriate default value
         self.sampling_frequency = None
-        self.reconstruction_method = 'whittaker_shannon'
+        self.reconstruction_method = None
 
     def sample_signal(self, signal, sampling_frequency):
         # Sample the signal
@@ -13,30 +13,19 @@ class SignalSampler:
         sample_indices = np.arange(0, len(signal), int(len(signal) / sampling_frequency))
         self.sampled_signal = signal[sample_indices]
 
-    def recover_signal(self, signal, method='whittaker_shannon'):
+    def recover_signal(self, method='whittaker_shannon'):
         # Recover the signal using the specified method
         self.reconstruction_method = method
         if method == 'whittaker_shannon':
-            self.reconstructed_signal = self.whittaker_shannon_interpolation(signal)
+            # Implement Whittaker-Shannon interpolation
+            t = np.linspace(0, 1, len(self.sampled_signal))
+            self.reconstructed_signal = np.interp(t, np.linspace(0, 1, len(self.sampled_signal)), self.sampled_signal)
         else:
-            # Implement other methods if needed
+            # Implement other methods
             pass
-
-    def whittaker_shannon_interpolation(self, signal):
-        # Implement Whittaker-Shannon interpolation
-        t = np.arange(len(signal))
-        T = 1 / self.sampling_frequency
-        sinc_matrix = np.sinc(t[:, None] - t[None, :] / T)
-        return np.dot(sinc_matrix, signal)
 
     def set_sampling_frequency(self, frequency):
         self.sampling_frequency = frequency
 
     def choose_reconstruction_method(self, method):
         self.reconstruction_method = method
-
-# Example usage
-sampler = SignalSampler()
-signal = np.sin(2 * np.pi * 2 * np.linspace(0, 1, 1000)) + 0.5 * np.sin(2 * np.pi * 6 * np.linspace(0, 1, 1000))
-sampler.sample_signal(signal, 12)
-sampler.recover_signal(sampler.sampled_signal)
